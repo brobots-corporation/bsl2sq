@@ -13,11 +13,9 @@ def createParser():
     parser.add_argument('parseprefix', type=str,
                         help='префикс подсистем, в которых будет осуществляться поиск путей до файлов объектов метаданных')
     parser.add_argument('-f', '--file', type=str, default="",
-                        help='полный путь к файлу, в который будет выполняться выгрузка путей объектов метаданных')
+                        help='полный путь к файлу sonar-project.properties, в который будет выполняться выгрузка путей объектов метаданных на место переменной $inclusions_line')
     parser.add_argument('-a', '--absolute', action='store_const', const=True, default=False,
                         help='в случае указания флага будут выгружаться полные пути к файлам. без флага только относительные пути')
-    parser.add_argument('-u', '--unicode', action='store_const', const=True, default=False,
-                        help='в случае указания флага будут выгружаться значение в виде символов Unicode')
 
     return parser
 
@@ -35,6 +33,11 @@ def checkArgs(args):
     if len(args.parseprefix) == 0:
         print("необходимо указать не пустой префикс")
         sys.exit()
+    # Проверка, что по указанному пути находится папка
+    if len(args.file) != 0:
+        if not os.path.exists(args.file):
+            print("файл sonar-project.properties по указанному пути не найден")
+            sys.exit()
 
 # Парсинг xml файлов подсистем, для получения списка объектов
 def getObjects(file):
@@ -81,12 +84,43 @@ def getMetadataName(subsystems_path, splitter):
     return list_metadata_name
 
 # Получение путей к bsl файлам для определенных метаданных
-# def getBslFilesPath(list_metadata_name, source_path, full_path=False):
-#     for metadata_name in list_metadata_name:
-         
-#         os.chdir(source_path+metadata_name)
+def getBslFilesPath(list_metadata_name, source_path, splitter, full_path=False):
+    list_bsl_files = []
+    for metadata_name in list_metadata_name:
+        metadata_type_name = metadata_name[:metadata_name.find(".")]+"s"
+        metadata_only_name = metadata_name[metadata_name.find(".")+1:]
+        path_to_folder = getPathToFolder(args, metadata_type_name+splitter+metadata_only_name, splitter)
+
+        if not os.path.exists(path_to_folder): continue
+
+        os.chdir(path_to_folder)
+        # поиск файлов подсистем с заданным префиксом
+        bsl_files = glob.glob("**"+splitter+"*.bsl", recursive=True)
+
+        for file in bsl_files:
+            if full_path:
+                bsl_path = path_to_folder+file
+            else:
+                bsl_path = splitter+metadata_type_name+splitter+metadata_only_name+file
+            
+            list_bsl_files.append(bsl_path)
+            
+    return list_bsl_files
 
 
+# Получение строки с bsl файлами для подстановки в шаблон
+def getBslFilesLine(list_bsl_files):
+    count_bsl_files = len(list_bsl_files)
+    counter = 1
+    line_bsl_files = ""
+    for bsl_file_path in list_bsl_files:
+        if counter != count_bsl_files:
+            line_bsl_files = line_bsl_files + bsl_file_path +", \\"+"\n"
+        else:
+            line_bsl_files = line_bsl_files + bsl_file_path 
+        counter = counter + 1
+
+    return line_bsl_files
 ########################################################################################################
 
 
@@ -94,25 +128,26 @@ def getMetadataName(subsystems_path, splitter):
 parser = createParser()
 args = parser.parse_args()
 
-# Проверка аргументов командной строки
 checkArgs(args)
 
 # Определение ОС Windows и сплиттера, для замены слешей в путях к файлам и папкам
 # windows_os = True if sys.platform.find("window") != -1 else False
-splitter = "\\" if sys.platform.find("window") != -1  else "/"
+splitter = "\\" if re.match("^win", sys.platform)  else "/"
 
 subsystems_path = getPathToFolder(args, "subsystems", splitter)
 
-# Получение наименование объектов метаданных
 list_metadata_name = getMetadataName(subsystems_path, splitter)
 
-# set_bsl_files = set()
+list_bsl_files = getBslFilesPath(list_metadata_name, args.sourcedirectory, splitter, args.absolute)
 
-# for metadata in list_metadata:
-#     for obj in getObjects(SUBSYSTEMS_PATH+file):
-#         set_metadata.add(obj)
-
-linenum = 1
-for li in list_metadata_name:
-    print(str(linenum)+". "+li)
-    linenum = linenum + 1
+if len(args.file):
+    bsl_files_line = getBslFilesLine(list_bsl_files)
+    with open(args.file,'r') as sonar_properties_file_read:
+        sonar_properties_text = sonar_properties_file_read.read()
+    with open(args.file,'w') as sonar_properties_file_write:
+        sonar_properties_file_write.write(sonar_properties_text.replace("$inclusions_line", bsl_files_line))
+        # for line_sonar_properties_file in sonar_properties_file: 
+        # re.sub("\$\$", bsl_files_line, sonar_properties_file)
+else:
+    for li in list_bsl_files:
+        print(li)

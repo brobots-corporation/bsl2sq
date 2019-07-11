@@ -59,10 +59,10 @@ def getObjects(file):
     return metadata
 
 # Получение наименование объектов метаданных в указанных подсистемах
-def getMetadataName(subsystems_path, splitter):
+def getMetadataName(subsystems_path):
     os.chdir(subsystems_path)
     # поиск файлов подсистем с заданным префиксом
-    subsystems_folders = glob.glob("**"+splitter+args.parseprefix+"*.xml", recursive=True)
+    subsystems_folders = glob.glob(os.path.join("**", args.parseprefix+"*.xml"), recursive=True)
 
     set_metadata_name = set()
     list_metadata_name = []
@@ -88,7 +88,7 @@ def getBslFilesPath(list_metadata_name, source_path, full_path=False):
 
         os.chdir(path_to_folder)
         # поиск файлов подсистем с заданным префиксом
-        bsl_files = glob.glob("**"+splitter+"*.bsl", recursive=True)
+        bsl_files = glob.glob(os.path.join("**", "*.bsl"), recursive=True)
 
         for file in bsl_files:
             if full_path:
@@ -99,7 +99,6 @@ def getBslFilesPath(list_metadata_name, source_path, full_path=False):
             list_bsl_files.append(bsl_path)
             
     return list_bsl_files
-
 
 # Получение строки с bsl файлами для подстановки в шаблон
 def getBslFilesLine(list_bsl_files, unicode_bytes=False):
@@ -114,6 +113,7 @@ def getBslFilesLine(list_bsl_files, unicode_bytes=False):
         counter = counter + 1
 
     return line_bsl_files
+
 ########################################################################################################
 
 # TODO: Сделать процедуру со списком соответствия кириллице unicode номерам символов
@@ -126,7 +126,7 @@ checkArgs(args)
 
 subsystems_path = os.path.join(args.sourcedirectory, "subsystems")
 
-list_metadata_name = getMetadataName(subsystems_path, splitter)
+list_metadata_name = getMetadataName(subsystems_path)
 
 # TODO: Сделать подмену кириллических символов на номера unicode символов по списку из функции
 list_bsl_files = getBslFilesPath(list_metadata_name, args.sourcedirectory, args.absolute)

@@ -5,6 +5,21 @@ import glob
 import xml.dom.minidom as minidom
 import re
 
+# Создание таблицы кодов unicode для кириллических символов
+def getUnicodeList():
+    unicode_list = {'А': r'\u0410', 'Б': r'\u0411', 'В': r'\u0412', 'Г': r'\u0413', 'Д': r'\u0414', 'Е': r'\u0415', \
+        'Ж': r'\u0416', 'З': r'\u0417', 'И': r'\u0418', 'Й': r'\u0419', 'К': r'\u041A', 'Л': r'\u041B', 'М': r'\u041C', \
+        'Н': r'\u041D', 'О': r'\u041E', 'П': r'\u041F', 'Р': r'\u0420', 'С': r'\u0421', 'Т': r'\u0422', 'У': r'\u0423', \
+        'Ф': r'\u0424', 'Х': r'\u0425', 'Ц': r'\u0426', 'Ч': r'\u0427', 'Ш': r'\u0428', 'Щ': r'\u0429', 'Ъ': r'\u042A', \
+        'Ы': r'\u042B', 'Ь': r'\u042C', 'Э': r'\u042D', 'Ю': r'\u042E', 'Я': r'\u042F', 'а': r'\u0430', 'б': r'\u0431', \
+        'в': r'\u0432', 'г': r'\u0433', 'д': r'\u0434', 'е': r'\u0435', 'ж': r'\u0436', 'з': r'\u0437', 'и': r'\u0438', \
+        'й': r'\u0439', 'к': r'\u043A', 'л': r'\u043B', 'м': r'\u043C', 'н': r'\u043D', 'о': r'\u043E', 'п': r'\u043F', \
+        'р': r'\u0440', 'с': r'\u0441', 'т': r'\u0442', 'у': r'\u0443', 'ф': r'\u0444', 'х': r'\u0445', 'ц': r'\u0446', \
+        'ч': r'\u0447', 'ш': r'\u0448', 'щ': r'\u0449', 'ъ': r'\u044A', 'ы': r'\u044B', 'ь': r'\u044C', 'э': r'\u044D', \
+        'ю': r'\u044E', 'я': r'\u044F', 'ё': r'\u0451', 'Ё': r'\u0401'}
+
+    return unicode_list
+
 # Создание парсера аргументов командной строки
 def createParser():
     parser = argparse.ArgumentParser()
@@ -16,8 +31,8 @@ def createParser():
                         help='полный путь к файлу sonar-project.properties, в который будет выполняться выгрузка путей объектов метаданных на место переменной $inclusions_line')
     parser.add_argument('-a', '--absolute', action='store_const', const=True, default=False,
                         help='в случае указания флага будут выгружаться полные пути к файлам. без флага только относительные пути')
-    parser.add_argument('-b', '--bytes', action='store_const', const=True, default=False,
-                        help='в случае указания флага будут выгружаться все кириллические символы в байтах')                        
+    parser.add_argument('-u', '--unicode', action='store_const', const=True, default=False,
+                        help='в случае указания флага будут выгружаться все кириллические символы в символах unicode')                        
 
     return parser
 
@@ -92,9 +107,9 @@ def getBslFilesPath(list_metadata_name, source_path, full_path=False):
 
         for file in bsl_files:
             if full_path:
-                bsl_path = os.path.join(path_to_folder, file)
+                bsl_path = os.path.join("**", path_to_folder, file)
             else:
-                bsl_path = os.path.join(metadata_type_name, metadata_only_name, file)
+                bsl_path = os.path.join("**", metadata_type_name, metadata_only_name, file)
             
             list_bsl_files.append(bsl_path)
             
@@ -114,9 +129,14 @@ def getBslFilesLine(list_bsl_files, unicode_bytes=False):
 
     return line_bsl_files
 
-########################################################################################################
+# Перевод кириллических символов в коды unicode
+def replaceTextToUnicodeSymbols(text_line, unicode_list):
+    for unicode_symbol in unicode_list:
+        text_line = text_line.replace(unicode_symbol, unicode_list.get(unicode_symbol))
 
-# TODO: Сделать процедуру со списком соответствия кириллице unicode номерам символов
+    return text_line
+
+########################################################################################################
 
 # Получение парсера и разбор параметров командной строки
 parser = createParser()
@@ -128,11 +148,11 @@ subsystems_path = os.path.join(args.sourcedirectory, "subsystems")
 
 list_metadata_name = getMetadataName(subsystems_path)
 
-# TODO: Сделать подмену кириллических символов на номера unicode символов по списку из функции
 list_bsl_files = getBslFilesPath(list_metadata_name, args.sourcedirectory, args.absolute)
 
 if len(args.file):
     bsl_files_line = getBslFilesLine(list_bsl_files)
+    bsl_files_line = bsl_files_line if not args.unicode else replaceTextToUnicodeSymbols(bsl_files_line, getUnicodeList())
     with open(args.file,'r', encoding='utf-8') as sonar_properties_file_read:
         sonar_properties_text = sonar_properties_file_read.read()
     with open(args.file,'w', encoding='utf-8') as sonar_properties_file_write:

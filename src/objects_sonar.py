@@ -5,6 +5,10 @@ import glob
 import xml.dom.minidom as minidom
 import re
 
+KEYWORD_SONAR_INCLUSION = "sonar.inclusions="
+KEYWORD_INCL_LINE_END = "$inclusions_line_end"
+KEYWORD_INCL_LINE = "$inclusions_line"
+
 # Создание парсера аргументов командной строки
 def createParser():
     parser = argparse.ArgumentParser()
@@ -96,7 +100,9 @@ def getBslFilesPath(list_metadata_name, source_path, full_path=False):
             else:
                 bsl_path = os.path.join("**", metadata_type_name, metadata_only_name, file)
             
-            list_bsl_files.append(bsl_path.replace("\\", "/").encode("unicode-escape").decode("utf-8"))
+            bsl_path = bsl_path.replace("\\", "/")
+            bsl_path = bsl_path.encode("unicode-escape").decode("utf-8") if args.unicode else bsl_path
+            list_bsl_files.append(bsl_path)
             
     return list_bsl_files
 
@@ -109,7 +115,7 @@ def getBslFilesLine(list_bsl_files, unicode_bytes=False):
         if counter != count_bsl_files:
             line_bsl_files = line_bsl_files + bsl_file_path + ", \\"+"\n"
         else:
-            line_bsl_files = line_bsl_files + bsl_file_path 
+            line_bsl_files = line_bsl_files + bsl_file_path + "\n" + "#$inclusions_line_end"
         counter = counter + 1
 
     return line_bsl_files
@@ -128,15 +134,20 @@ list_metadata_name = getMetadataName(subsystems_path)
 
 list_bsl_files = getBslFilesPath(list_metadata_name, args.sourcedirectory, args.absolute)
 
-# TODO: Сделать перезапись в файле, с учетом того, что уже не будет переменной и надо удалять старое наполнение
+# TODO: Проверить все комбинация и покрыть тестами
 
 if len(args.file):
     bsl_files_line = getBslFilesLine(list_bsl_files)
     
     with open(args.file,'r', encoding='utf-8') as sonar_properties_file_read:
         sonar_properties_text = sonar_properties_file_read.read()
+        start_sublen = sonar_properties_text.find(KEYWORD_SONAR_INCLUSION)
+        end_sublen = sonar_properties_text.find(KEYWORD_INCL_LINE_END)
+        if end_sublen != -1:
+            sonar_properties_text = sonar_properties_text[:start_sublen + len(KEYWORD_SONAR_INCLUSION)] \
+            + KEYWORD_INCL_LINE + sonar_properties_text[end_sublen + len(KEYWORD_INCL_LINE_END):]
     with open(args.file,'w', encoding='utf-8') as sonar_properties_file_write:
-        sonar_properties_file_write.write(sonar_properties_text.replace("$inclusions_line", bsl_files_line))
+        sonar_properties_file_write.write(sonar_properties_text.replace(KEYWORD_INCL_LINE, bsl_files_line))
 else:
     for li in list_bsl_files:
         print(li) 

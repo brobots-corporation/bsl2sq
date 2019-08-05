@@ -1,5 +1,7 @@
 # BSL objects finder
 
+[![Build Status](https://travis-ci.org/gostmair/bsl-objects-to-analyze-sonar.svg?branch=master)](https://travis-ci.org/gostmair/bsl-objects-to-analyze-sonar)
+
 Поиск bsl файлов проекта (конфигурации 1С) по вхождению в подсистемы
 
 ## Возможности
@@ -12,6 +14,7 @@
 ## Установка и обновление
 
 * Установить Python версии не ниже 3.5;
+* Анализ файлов выгрузки платформы 1С версии не ниже 8.3.10;
 * Разместить файл objects_sonar.py в месте использования.
 
 
@@ -40,7 +43,7 @@ sonar.inclusions=$inclusions_line
 ### Пример использования скрипта в Linux
 
 ```sh
-python objects_sonar.py "/Users/aleksey/GitReps/rn_erp/src/conf" "рн_" -u -f "/Users/aleksey/GitReps/rn_erp/sonar-project.properties"
+python objects_sonar.py "/Users/gostmair/GitReps/rn_erp/src/conf" "рн_" -u -f "/Users/gostmair/GitReps/rn_erp/sonar-project.properties"
 ```
 
 ### Пример использования скрипта в Windows

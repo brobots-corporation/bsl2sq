@@ -9,11 +9,18 @@ dist: trusty
 
 addons:
   sonarcloud:
-    organization: "mwixbot" # the key of the org you chose at step #3
+    organization: "mwixbot"
     token:
       secure: $SONAR_TOKEN
 
+jobs:
+  include:
+    - stage: test
+      name: "Unit tests"
+      script: python -m unittest tests/test_checkArgs.py
+    - stage: checkcode
+      name: "Code analyze"
+      script: sonar-scanner
 
-script: 
-  - python -m unittest tests/test_checkArgs.py
-  - sonar-scanner
+notifications:
+  email: false

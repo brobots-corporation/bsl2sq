@@ -5,17 +5,11 @@ dist: trusty
 addons:
   sonarcloud:
     organization: "mwixbot"
-    token:
-      secure: $SONAR_TOKEN
 
 jobs:
   include:
     - stage: test
       name: "Unit tests"
-      python:
-        - '3.5'
-        - '3.6'
-        - '3.7'
       script: python -m unittest tests/test_checkArgs.py
     - stage: checkcode
       name: "Code analyze"

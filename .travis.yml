@@ -1,10 +1,5 @@
 language: python
 
-python:
-  - '3.5'
-  - '3.6'
-  - '3.7'
-
 dist: trusty
 
 addons:
@@ -17,10 +12,14 @@ jobs:
   include:
     - stage: test
       name: "Unit tests"
+      python:
+        - '3.5'
+        - '3.6'
+        - '3.7'
       script: python -m unittest tests/test_checkArgs.py
     - stage: checkcode
       name: "Code analyze"
-      script: sonar-scanner
+      script: sonar-scanner -X
 
 notifications:
   email: false

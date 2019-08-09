@@ -1,6 +1,6 @@
 # BSL objects finder
 
-[![Build Status](https://travis-ci.org/gostmair/bsl-objects-to-analyze-sonar.svg?branch=master)](https://travis-ci.org/gostmair/bsl-objects-to-analyze-sonar)
+[![Build Status](https://travis-ci.org/brobots-team/bsl-objects-to-analyze-sonar.svg?branch=master)](https://travis-ci.org/brobots-team/bsl-objects-to-analyze-sonar)
 
 Поиск bsl файлов проекта (конфигурации 1С) по вхождению в подсистемы
 

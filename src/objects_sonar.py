@@ -134,8 +134,6 @@ list_metadata_name = getMetadataName(subsystems_path)
 
 list_bsl_files = getBslFilesPath(list_metadata_name, args.sourcedirectory, args.absolute)
 
-# TODO: Покрыть тестами
-
 if len(args.file):
     bsl_files_line = getBslFilesLine(list_bsl_files)
     

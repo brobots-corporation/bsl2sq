@@ -4,7 +4,7 @@ dist: trusty
 
 addons:
   sonarcloud:
-    organization: "mwixbot"
+    organization: "brobots-team"
 
 jobs:
   include:
@@ -13,7 +13,7 @@ jobs:
       script: python -m unittest tests/test_checkArgs.py
     - stage: checkcode
       name: "Code analyze"
-      script: sonar-scanner -X
+      script: sonar-scanner
 
 notifications:
   email: false

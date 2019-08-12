@@ -1,3 +1,6 @@
 *launch.json
 .DS_Store
 .vscode
+build
+dist
+objects_sonar.spec

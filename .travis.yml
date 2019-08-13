@@ -1,20 +1,11 @@
 language: python
 
-matrix:
-  include:
-    - name: "Python 3.5 on Xenial Linux"
-      dist: xenial
-      python: 3.5
-    - name: "Python 3.6 on Xenial Linux"
-      dist: xenial
-      python: 3.6
-    - name: "Python 3.7 on Xenial Linux"
-      dist: xenial
-      python: 3.7
-    - name: "Python 3.7 on MacOS"
-      os: osx
-      osx_image: xcode10.2
-      language: shell
+dist: xenial
+
+python:
+  - '3.5'
+  - '3.6'
+  - '3.7'
 
 script: python -m unittest tests/test_checkArgs.py
 

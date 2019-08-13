@@ -14,19 +14,15 @@ matrix:
       os: osx
       osx_image: xcode10.2
       language: shell
-
-script: python -m unittest tests/test_checkArgs.py
-
-addons:
-  sonarcloud:
-    organization: "brobots-team"
-
-jobs:
-  include:
-    - stage: "Code analyze"
+    - name: "Code analyze"
       python: 3.7
       os: linux
+      addons:
+        sonarcloud:
+          organization: "brobots-team"
       script: sonar-scanner
+
+script: python -m unittest tests/test_checkArgs.py
 
 notifications:
   email:

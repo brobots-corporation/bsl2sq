@@ -1,7 +1,6 @@
 language: python
 
 matrix:
-  fast_finish: true
   include:
     - name: "Python 3.5 on Xenial Linux"
       dist: xenial

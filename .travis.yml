@@ -1,15 +1,19 @@
 language: python
 
-dist: xenial
-
 python:
   - "3.5"
   - "3.6"
   - "3.7"
 
-os:
-  - linux
-  - osx
+matrix:
+  include:
+    - name: "Python on Xenial Linux"
+      os: linux
+      dist: xenial
+    - name: "Python on MacOS"
+      os: osx
+      osx_image: xcode10.2
+      language: shell
 
 script: python -m unittest tests/test_checkArgs.py
 
@@ -20,9 +24,9 @@ addons:
 jobs:
   include:
     - stage: "Code analyze"
-      script: sonar-scanner
       python: 3.7
       os: linux
+      script: sonar-scanner
 
 notifications:
   email:

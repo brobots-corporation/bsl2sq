@@ -2,18 +2,29 @@ language: python
 
 dist: trusty
 
+python:
+  - "3.5"
+  - "3.6"
+  - "3.7"
+
+os:
+  - linux
+  - osx
+
+script: python -m unittest tests/test_checkArgs.py
+
 addons:
   sonarcloud:
     organization: "brobots-team"
 
 jobs:
   include:
-    - stage: test
-      name: "Unit tests"
-      script: python -m unittest tests/test_checkArgs.py
-    - stage: checkcode
-      name: "Code analyze"
+    - stage: "Code analyze"
       script: sonar-scanner
+      python: 3.7
+      os: linux
 
 notifications:
-  email: false
+  email:
+    on_failure: always
+    on_error: always

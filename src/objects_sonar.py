@@ -9,31 +9,36 @@ KEYWORD_SONAR_INCLUSION = "sonar.inclusions="
 KEYWORD_INCL_LINE_END = "$inclusions_line_end"
 KEYWORD_INCL_LINE = "$inclusions_line"
 
-# Создание парсера аргументов командной строки
+
 def createParser():
+    # Создание парсера аргументов командной строки
     parser = argparse.ArgumentParser()
     parser.add_argument('sourcedirectory', type=str,
                         help='путь к корневой папке с выгруженной конфигурацией 1с')
     parser.add_argument('parseprefix', type=str,
-                        help='префикс подсистем, в которых будет осуществляться поиск путей до файлов объектов метаданных')
+                        help='префикс подсистем, в которых будет осуществляться поиск путей до \
+                              файлов объектов метаданных')
     parser.add_argument('-f', '--file', type=str, default="",
-                        help='полный путь к файлу sonar-project.properties, в который будет выполняться выгрузка путей объектов метаданных на место переменной $inclusions_line')
+                        help='полный путь к файлу sonar-project.properties, в который будет выполняться \
+                              выгрузка путей объектов метаданных на место переменной $inclusions_line')
     parser.add_argument('-a', '--absolute', action='store_const', const=True, default=False,
-                        help='в случае указания флага будут выгружаться полные пути к файлам. без флага только относительные пути')
+                        help='в случае указания флага будут выгружаться полные пути к файлам. без флага \
+                              только относительные пути')
     parser.add_argument('-u', '--unicode', action='store_const', const=True, default=False,
-                        help='в случае указания флага будут выгружаться все кириллические символы в символах unicode')                        
+                        help='в случае указания флага будут выгружаться все кириллические символы в символах unicode')
 
     return parser
 
-# Процедура проверки аргументов командной строки
+
 def checkArgs(args):
+    # Процедура проверки аргументов командной строки
     # Проверка существования указанной папки
     if not os.path.exists(args.sourcedirectory):
-        print(args.sourcedirectory+" - папка не существует")
+        print(args.sourcedirectory + " - папка не существует")
         sys.exit()
     # Проверка, что по указанному пути находится папка
     if not os.path.isdir(args.sourcedirectory):
-        print(args.sourcedirectory+" - это не папка")
+        print(args.sourcedirectory + " - это не папка")
         sys.exit()
     # Проверка указания не пустого префикса для подсистем
     if len(args.parseprefix) == 0:
@@ -45,12 +50,13 @@ def checkArgs(args):
             print("файл sonar-project.properties по указанному пути не найден")
             sys.exit()
 
-# Парсинг xml файлов подсистем, для получения списка объектов
+
 def getObjects(file):
-    # Парсинг файла до тегов item
+    # Парсинг xml файлов подсистем, для получения списка объектов
     doc = minidom.parse(file)
-    sub_items = doc.getElementsByTagName("MetaDataObject")[0].getElementsByTagName("Subsystem")[0].getElementsByTagName("Properties")[0].getElementsByTagName("Content")[0].getElementsByTagName("xr:Item")
-    
+    subsys_tag = doc.getElementsByTagName("MetaDataObject")[0].getElementsByTagName("Subsystem")[0]
+    content_tag = subsys_tag.getElementsByTagName("Properties")[0].getElementsByTagName("Content")[0]
+    sub_items = content_tag.getElementsByTagName("xr:Item")
     # Маска поиска guid удаленных объектов, которые остались в подсистемах, чтобы их исключить
     mask = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
     metadata = set()
@@ -59,14 +65,14 @@ def getObjects(file):
         # Проверка результата, что он является путем к объекту, а не guid
         if not re.match(mask, obj):
             metadata.add(item.childNodes[0].data)
-    
     return metadata
 
-# Получение наименование объектов метаданных в указанных подсистемах
+
 def getMetadataName(subsystems_path):
+    # Получение наименование объектов метаданных в указанных подсистемах
     os.chdir(subsystems_path)
     # поиск файлов подсистем с заданным префиксом
-    subsystems_folders = glob.glob(os.path.join("**", args.parseprefix+"*.xml"), recursive=True)
+    subsystems_folders = glob.glob(os.path.join("**", args.parseprefix + "*.xml"), recursive=True)
 
     set_metadata_name = set()
     list_metadata_name = []
@@ -80,15 +86,17 @@ def getMetadataName(subsystems_path):
 
     return list_metadata_name
 
-# Получение путей к bsl файлам для определенных метаданных
+
 def getBslFilesPath(list_metadata_name, source_path, full_path=False):
+    # Получение путей к bsl файлам для определенных метаданных
     list_bsl_files = []
     for metadata_name in list_metadata_name:
-        metadata_type_name = metadata_name[:metadata_name.find(".")]+"s"
-        metadata_only_name = metadata_name[metadata_name.find(".")+1:]
+        metadata_type_name = metadata_name[:metadata_name.find(".")] + "s"
+        metadata_only_name = metadata_name[metadata_name.find(".") + 1:]
         path_to_folder = os.path.join(args.sourcedirectory, metadata_type_name, metadata_only_name)
 
-        if not os.path.exists(path_to_folder): continue
+        if not os.path.exists(path_to_folder):
+            continue
 
         os.chdir(path_to_folder)
         # поиск файлов подсистем с заданным префиксом
@@ -99,21 +107,20 @@ def getBslFilesPath(list_metadata_name, source_path, full_path=False):
                 bsl_path = os.path.join("**", path_to_folder, file)
             else:
                 bsl_path = os.path.join("**", metadata_type_name, metadata_only_name, file)
-            
             bsl_path = bsl_path.replace("\\", "/")
             bsl_path = bsl_path.encode("unicode-escape").decode("utf-8") if args.unicode else bsl_path
             list_bsl_files.append(bsl_path)
-            
     return list_bsl_files
 
-# Получение строки с bsl файлами для подстановки в шаблон
+
 def getBslFilesLine(list_bsl_files, unicode_bytes=False):
+    # Получение строки с bsl файлами для подстановки в шаблон
     count_bsl_files = len(list_bsl_files)
     counter = 1
     line_bsl_files = ""
     for bsl_file_path in list_bsl_files:
         if counter != count_bsl_files:
-            line_bsl_files = line_bsl_files + bsl_file_path + ", \\"+"\n"
+            line_bsl_files = line_bsl_files + bsl_file_path + ", \\" + "\n"
         else:
             line_bsl_files = line_bsl_files + bsl_file_path + "\n" + "#$inclusions_line_end"
         counter = counter + 1
@@ -122,7 +129,7 @@ def getBslFilesLine(list_bsl_files, unicode_bytes=False):
 
 ########################################################################################################
 
-# Получение парсера и разбор параметров командной строки
+
 parser = createParser()
 args = parser.parse_args()
 
@@ -136,16 +143,16 @@ list_bsl_files = getBslFilesPath(list_metadata_name, args.sourcedirectory, args.
 
 if len(args.file):
     bsl_files_line = getBslFilesLine(list_bsl_files)
-    
-    with open(args.file,'r', encoding='utf-8') as sonar_properties_file_read:
+    with open(args.file, 'r', encoding='utf-8') as sonar_properties_file_read:
         sonar_properties_text = sonar_properties_file_read.read()
         start_sublen = sonar_properties_text.find(KEYWORD_SONAR_INCLUSION)
         end_sublen = sonar_properties_text.find(KEYWORD_INCL_LINE_END)
         if end_sublen != -1:
-            sonar_properties_text = sonar_properties_text[:start_sublen + len(KEYWORD_SONAR_INCLUSION)] \
-            + KEYWORD_INCL_LINE + sonar_properties_text[end_sublen + len(KEYWORD_INCL_LINE_END):]
-    with open(args.file,'w', encoding='utf-8') as sonar_properties_file_write:
+            f_part_text = sonar_properties_text[:start_sublen + len(KEYWORD_SONAR_INCLUSION)]
+            e_part_text = sonar_properties_text[end_sublen + len(KEYWORD_INCL_LINE_END):]
+            sonar_properties_text = f_part_text + KEYWORD_INCL_LINE + e_part_text
+    with open(args.file, 'w', encoding='utf-8') as sonar_properties_file_write:
         sonar_properties_file_write.write(sonar_properties_text.replace(KEYWORD_INCL_LINE, bsl_files_line))
 else:
     for li in list_bsl_files:
-        print(li) 
+        print(li)

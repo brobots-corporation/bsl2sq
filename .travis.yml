@@ -13,7 +13,6 @@ jobs:
   include:
     - stage: "Code analyze"
       python: 3.7
-      dist: xenial
       addons:
         sonarcloud:
           organization: "brobots-team"
@@ -21,5 +20,5 @@ jobs:
 
 notifications:
   email:
-    on_failure: always
-    on_error: always
+    on_failure: change
+    on_error: change

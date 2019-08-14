@@ -1,16 +1,16 @@
-import sys
 import argparse
-import os
 import glob
-import xml.dom.minidom as minidom
+import os
 import re
+import sys
+import xml.dom.minidom as minidom
 
 KEYWORD_SONAR_INCLUSION = "sonar.inclusions="
 KEYWORD_INCL_LINE_END = "$inclusions_line_end"
 KEYWORD_INCL_LINE = "$inclusions_line"
 
 
-def createParser():
+def create_parser():
     # Создание парсера аргументов командной строки
     parser = argparse.ArgumentParser()
     parser.add_argument('sourcedirectory', type=str,
@@ -30,7 +30,7 @@ def createParser():
     return parser
 
 
-def checkArgs(args):
+def check_args(args):
     # Процедура проверки аргументов командной строки
     # Проверка существования указанной папки
     if not os.path.exists(args.sourcedirectory):
@@ -45,13 +45,12 @@ def checkArgs(args):
         print("необходимо указать не пустой префикс")
         sys.exit()
     # Проверка, что по указанному пути находится папка
-    if len(args.file) != 0:
-        if not os.path.exists(args.file):
-            print("файл sonar-project.properties по указанному пути не найден")
-            sys.exit()
+    if len(args.file) != 0 and not os.path.exists(args.file):
+        print("файл sonar-project.properties по указанному пути не найден")
+        sys.exit()
 
 
-def getObjects(file):
+def get_objects(file):
     # Парсинг xml файлов подсистем, для получения списка объектов
     doc = minidom.parse(file)
     subsys_tag = doc.getElementsByTagName("MetaDataObject")[0].getElementsByTagName("Subsystem")[0]
@@ -68,7 +67,7 @@ def getObjects(file):
     return metadata
 
 
-def getMetadataName(subsystems_path):
+def get_metadata_name(subsystems_path):
     # Получение наименование объектов метаданных в указанных подсистемах
     os.chdir(subsystems_path)
     # поиск файлов подсистем с заданным префиксом
@@ -78,7 +77,7 @@ def getMetadataName(subsystems_path):
     list_metadata_name = []
 
     for subsystem_folder in subsystems_folders:
-        for metadata_name in getObjects(os.path.join(subsystems_path, subsystem_folder)):
+        for metadata_name in get_objects(os.path.join(subsystems_path, subsystem_folder)):
             set_metadata_name.add(metadata_name)
 
     list_metadata_name = list(set_metadata_name)
@@ -87,7 +86,7 @@ def getMetadataName(subsystems_path):
     return list_metadata_name
 
 
-def getBslFilesPath(list_metadata_name, source_path, full_path=False):
+def get_bsl_files_path(list_metadata_name, source_path, full_path=False):
     # Получение путей к bsl файлам для определенных метаданных
     list_bsl_files = []
     for metadata_name in list_metadata_name:
@@ -113,7 +112,7 @@ def getBslFilesPath(list_metadata_name, source_path, full_path=False):
     return list_bsl_files
 
 
-def getBslFilesLine(list_bsl_files, unicode_bytes=False):
+def get_bsl_files_line(list_bsl_files, unicode_bytes=False):
     # Получение строки с bsl файлами для подстановки в шаблон
     count_bsl_files = len(list_bsl_files)
     counter = 1
@@ -130,19 +129,19 @@ def getBslFilesLine(list_bsl_files, unicode_bytes=False):
 ########################################################################################################
 
 
-parser = createParser()
+parser = create_parser()
 args = parser.parse_args()
 
-checkArgs(args)
+check_args(args)
 
 subsystems_path = os.path.join(args.sourcedirectory, "subsystems")
 
-list_metadata_name = getMetadataName(subsystems_path)
+list_metadata_name = get_metadata_name(subsystems_path)
 
-list_bsl_files = getBslFilesPath(list_metadata_name, args.sourcedirectory, args.absolute)
+list_bsl_files = get_bsl_files_path(list_metadata_name, args.sourcedirectory, args.absolute)
 
 if len(args.file):
-    bsl_files_line = getBslFilesLine(list_bsl_files)
+    bsl_files_line = get_bsl_files_line(list_bsl_files)
     with open(args.file, 'r', encoding='utf-8') as sonar_properties_file_read:
         sonar_properties_text = sonar_properties_file_read.read()
         start_sublen = sonar_properties_text.find(KEYWORD_SONAR_INCLUSION)

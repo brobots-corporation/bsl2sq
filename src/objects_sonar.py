@@ -126,32 +126,26 @@ def get_bsl_files_line(list_bsl_files, unicode_bytes=False):
 
     return line_bsl_files
 
-########################################################################################################
 
-
-parser = create_parser()
-args = parser.parse_args()
-
-check_args(args)
-
-subsystems_path = os.path.join(args.sourcedirectory, "subsystems")
-
-list_metadata_name = get_metadata_name(subsystems_path)
-
-list_bsl_files = get_bsl_files_path(list_metadata_name, args.sourcedirectory, args.absolute)
-
-if len(args.file):
-    bsl_files_line = get_bsl_files_line(list_bsl_files)
-    with open(args.file, 'r', encoding='utf-8') as sonar_properties_file_read:
-        sonar_properties_text = sonar_properties_file_read.read()
-        start_sublen = sonar_properties_text.find(KEYWORD_SONAR_INCLUSION)
-        end_sublen = sonar_properties_text.find(KEYWORD_INCL_LINE_END)
-        if end_sublen != -1:
-            f_part_text = sonar_properties_text[:start_sublen + len(KEYWORD_SONAR_INCLUSION)]
-            e_part_text = sonar_properties_text[end_sublen + len(KEYWORD_INCL_LINE_END):]
-            sonar_properties_text = f_part_text + KEYWORD_INCL_LINE + e_part_text
-    with open(args.file, 'w', encoding='utf-8') as sonar_properties_file_write:
-        sonar_properties_file_write.write(sonar_properties_text.replace(KEYWORD_INCL_LINE, bsl_files_line))
-else:
-    for li in list_bsl_files:
-        print(li)
+if __name__ == "__main__":
+    parser = create_parser()
+    args = parser.parse_args()
+    check_args(args)
+    subsystems_path = os.path.join(args.sourcedirectory, "subsystems")
+    list_metadata_name = get_metadata_name(subsystems_path)
+    list_bsl_files = get_bsl_files_path(list_metadata_name, args.sourcedirectory, args.absolute)
+    if len(args.file):
+        bsl_files_line = get_bsl_files_line(list_bsl_files)
+        with open(args.file, 'r', encoding='utf-8') as sonar_properties_file_read:
+            sonar_properties_text = sonar_properties_file_read.read()
+            start_sublen = sonar_properties_text.find(KEYWORD_SONAR_INCLUSION)
+            end_sublen = sonar_properties_text.find(KEYWORD_INCL_LINE_END)
+            if end_sublen != -1:
+                f_part_text = sonar_properties_text[:start_sublen + len(KEYWORD_SONAR_INCLUSION)]
+                e_part_text = sonar_properties_text[end_sublen + len(KEYWORD_INCL_LINE_END):]
+                sonar_properties_text = f_part_text + KEYWORD_INCL_LINE + e_part_text
+        with open(args.file, 'w', encoding='utf-8') as sonar_properties_file_write:
+            sonar_properties_file_write.write(sonar_properties_text.replace(KEYWORD_INCL_LINE, bsl_files_line))
+    else:
+        for li in list_bsl_files:
+            print(li)

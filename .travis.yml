@@ -7,7 +7,7 @@ python:
   - '3.6'
   - '3.7'
 
-script: python -m unittest tests/test_checkArgs.py
+script: python -m unittest tests/test_objects_sonar.py
 
 jobs:
   include:

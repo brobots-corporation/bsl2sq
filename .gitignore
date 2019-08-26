@@ -1,6 +1,22 @@
+# Игнорировать файлы VSC
 *launch.json
-.DS_Store
 .vscode
+
+# Игнорировать файлы Mac OS X
+.DS_Store
+
+# Игнорировать файлы pyinstaller
 build
 dist
 objects_sonar.spec
+
+# Игнорировать байткод
+*.pyc
+*.pyo
+**/__pycache__/
+
+# Игнорировать каталог с файлами настройки
+**/config/
+
+# Игнорировать каталог с артефактами тестирования
+**/test_src/

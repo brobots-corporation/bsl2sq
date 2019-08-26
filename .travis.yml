@@ -7,6 +7,7 @@ python:
   - '3.6'
   - '3.7'
 
+before_script: tests/init_structure.sh
 script: python -m unittest tests/test_objects_sonar.py
 
 jobs:

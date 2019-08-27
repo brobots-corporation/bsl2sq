@@ -1,5 +1,8 @@
 import unittest
-import src.objects_sonar
+import sys
+import os
+sys.path.append(os.path.join(os.path.abspath(os.path.curdir), "bsl-objects-to-analyze-sonar"))
+import objects_sonar
 
 
 class TestCheckArgs(unittest.TestCase):

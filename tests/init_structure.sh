@@ -2,12 +2,13 @@
 
 set -euv 
 
-pwd
-# NAME_TEST_STR_ARCH='conf.tar.gz'
+ROOT_DIR=$(pwd)
+NAME_TEST_STR_ARCH='conf.tar.gz'
 
-# mkdir -p ./test_src
-# cd ./test_src
+cd ./tests
 
-# tar -xzf $NAME_TEST_STR_ARCH
-# root_dir=$(pwd)
-# chmod -R 777 $root_dir
+tar -xzf $NAME_TEST_STR_ARCH
+TEST_DIR=$(pwd)
+chmod -R 777 $TEST_DIR
+
+cd $ROOT_DIR

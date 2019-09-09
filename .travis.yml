@@ -17,6 +17,7 @@ jobs:
       addons:
         sonarcloud:
           organization: "brobots-team"
+      before_script: echo "Пропуск разворачивания тестовой структуру"
       script: sonar-scanner
 
 notifications:

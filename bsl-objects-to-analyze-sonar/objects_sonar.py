@@ -26,6 +26,9 @@ def create_parser():
                               только относительные пути')
     parser.add_argument('-u', '--unicode', action='store_const', const=True, default=False,
                         help='в случае указания флага будут выгружаться все кириллические символы в символах unicode')
+    parser.add_argument('-F', '--accfile', type=str, default="",
+                        help='полный путь к файлу, в который будет выполняться \
+                              выгрузка путей объектов метаданных для проверки в АПК')                        
 
     return parser
 
@@ -86,9 +89,9 @@ def get_metadata_name(subsystems_path):
     return list_metadata_name
 
 
-def get_bsl_files_path(list_metadata_name, source_path, full_path=False):
+def get_bsl_files_path(list_bsl_files_acc, list_bsl_files_sc, list_metadata_name, source_path,
+                       full_path=False, accfile=''):
     # Получение путей к bsl файлам для определенных метаданных
-    list_bsl_files = []
     for metadata_name in list_metadata_name:
         metadata_type_name = metadata_name[:metadata_name.find(".")] + "s"
         metadata_only_name = metadata_name[metadata_name.find(".") + 1:]
@@ -102,27 +105,47 @@ def get_bsl_files_path(list_metadata_name, source_path, full_path=False):
         bsl_files = glob.glob(os.path.join("**", "*.bsl"), recursive=True)
 
         for file in bsl_files:
-            if full_path:
-                bsl_path = os.path.join("**", path_to_folder, file)
-            else:
-                bsl_path = os.path.join("**", metadata_type_name, metadata_only_name, file)
-            bsl_path = bsl_path.replace("\\", "/")
-            bsl_path = bsl_path.encode("unicode-escape").decode("utf-8") if args.unicode else bsl_path
-            list_bsl_files.append(bsl_path)
-    return list_bsl_files
+            append_to_list_bsl_files_sc(file, full_path, path_to_folder, metadata_type_name, metadata_only_name)
+            if len(accfile) != 0:
+                append_to_list_bsl_files_acc(file, full_path, path_to_folder, metadata_type_name, metadata_only_name)
 
 
-def get_bsl_files_line(list_bsl_files, unicode_bytes=False):
+def append_to_list_bsl_files_sc(file, full_path, path_to_folder, metadata_type_name, metadata_only_name):
+    if full_path:
+        bsl_path_sc = os.path.join("**", path_to_folder, file)
+    else:
+        bsl_path_sc = os.path.join("**", metadata_type_name, metadata_only_name, file)
+
+    bsl_path_sc = bsl_path_sc.replace("\\", "/")
+    bsl_path_sc = bsl_path_sc.encode("unicode-escape").decode("utf-8") if args.unicode else bsl_path_sc
+    list_bsl_files_sc.append(bsl_path_sc)
+
+
+def append_to_list_bsl_files_acc(file, full_path, path_to_folder, metadata_type_name, metadata_only_name):
+    if full_path:
+        bsl_path_acc = os.path.join(path_to_folder, file)
+    else:
+        bsl_path_acc = os.path.join(metadata_type_name, metadata_only_name, file)
+
+    bsl_path_acc = bsl_path_acc.replace("\\", "/")
+    list_bsl_files_acc.append(bsl_path_acc)
+
+
+def get_bsl_files_line(list_bsl_files, is_acc_files_line=False):
     # Получение строки с bsl файлами для подстановки в шаблон
     count_bsl_files = len(list_bsl_files)
     counter = 1
     line_bsl_files = ""
+    end_line = "\n" if is_acc_files_line else (", \\" + "\n")
+    end_line_last_line = "" if is_acc_files_line else ("\n" + "#$inclusions_line_end")
+
     for bsl_file_path in list_bsl_files:
         if counter != count_bsl_files:
-            line_bsl_files = line_bsl_files + bsl_file_path + ", \\" + "\n"
+            line_bsl_files = line_bsl_files + bsl_file_path + end_line
         else:
-            line_bsl_files = line_bsl_files + bsl_file_path + "\n" + "#$inclusions_line_end"
-        counter = counter + 1
+            line_bsl_files = line_bsl_files + bsl_file_path + end_line_last_line
+
+    counter = counter + 1
 
     return line_bsl_files
 
@@ -133,9 +156,15 @@ if __name__ == "__main__":
     check_args(args)
     subsystems_path = os.path.join(args.sourcedirectory, "subsystems")
     list_metadata_name = get_metadata_name(subsystems_path)
-    list_bsl_files = get_bsl_files_path(list_metadata_name, args.sourcedirectory, args.absolute)
+    # Список файлов проверки для sonar-scanner
+    list_bsl_files_sc = []
+    # Список файлов проверки для АПК
+    list_bsl_files_acc = []
+    # Заполнение списков файлов
+    get_bsl_files_path(list_bsl_files_acc, list_bsl_files_sc, list_metadata_name,
+                       args.sourcedirectory, args.absolute, args.accfile)
     if len(args.file):
-        bsl_files_line = get_bsl_files_line(list_bsl_files)
+        bsl_files_line = get_bsl_files_line(list_bsl_files_sc)
         with open(args.file, 'r', encoding='utf-8') as sonar_properties_file_read:
             sonar_properties_text = sonar_properties_file_read.read()
             start_sublen = sonar_properties_text.find(KEYWORD_SONAR_INCLUSION)
@@ -147,5 +176,9 @@ if __name__ == "__main__":
         with open(args.file, 'w', encoding='utf-8') as sonar_properties_file_write:
             sonar_properties_file_write.write(sonar_properties_text.replace(KEYWORD_INCL_LINE, bsl_files_line))
     else:
-        for li in list_bsl_files:
+        for li in list_bsl_files_sc:
             print(li)
+
+    if len(args.accfile) != 0:
+        with open(args.accfile, 'w', encoding='utf-8') as acc_file_write:
+            acc_file_write.write(get_bsl_files_line(list_bsl_files_acc, True))

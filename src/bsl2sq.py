@@ -4,9 +4,11 @@ import os
 import re
 import sys
 import xml.dom.minidom as minidom
+from version import __version__
+
 
 KEYWORD_SONAR_INCLUSION = "sonar.inclusions="
-KEYWORD_INCL_LINE_END = "$inclusions_line_end"
+KEYWORD_INCL_LINE_END = "$inclusions_end"
 KEYWORD_INCL_LINE = "$inclusions_line"
 
 
@@ -31,6 +33,8 @@ def create_parser():
                               выгрузка путей объектов метаданных для проверки в АПК')
     parser.add_argument('-v', '--verbose', action='store_const', const=True, default=False,
                         help='выводить описание выполняемых операций')
+    parser.add_argument('-V', '--version', action='version', version=__version__,
+                        help='вывести номер версии')
 
     return parser
 
@@ -81,8 +85,12 @@ def get_objects(file):
 def get_metadata_name(subsystems_path):
     # Получение наименование объектов метаданных в указанных подсистемах
     os.chdir(subsystems_path)
-    # поиск файлов подсистем с заданным префиксом
-    subsystems_folders = glob.glob(os.path.join("**", args.parseprefix + "*.xml"), recursive=True)
+    subsystems_folders = []
+
+    # Перебор всех переданных префиксов подсистем
+    for prfx in args.parseprefix.split(' '):
+        # поиск файлов подсистем с заданным префиксом
+        subsystems_folders.extend(glob.glob(os.path.join("**", prfx + "*.xml"), recursive=True))
 
     if args.verbose:
         print(f">>> Найдено подсистем для анализа: {len(subsystems_folders)}")
@@ -205,7 +213,8 @@ if __name__ == "__main__":
                 e_part_text = sonar_properties_text[end_sublen + len(KEYWORD_INCL_LINE_END):]
                 sonar_properties_text = f_part_text + KEYWORD_INCL_LINE + e_part_text
         with open(args.file, 'w', encoding='utf-8') as sonar_properties_file_write:
-            sonar_properties_file_write.write(sonar_properties_text.replace(KEYWORD_INCL_LINE, bsl_files_line))
+            sonar_properties_file_write.write(
+                sonar_properties_text.replace(KEYWORD_INCL_LINE, bsl_files_line + KEYWORD_INCL_LINE_END))
     else:
         for li in list_bsl_files_sc:
             print(li)

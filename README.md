@@ -1,6 +1,6 @@
-# BSL objects finder
+# Поисковик bsl модулей для sonarqube и 1С:АПК
 
-[![Build Status](https://travis-ci.org/brobots-team/bsl-objects-to-analyze-sonar.svg?branch=master)](https://travis-ci.org/brobots-team/bsl-objects-to-analyze-sonar) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bsl-objects-to-analyze-sonar&metric=alert_status)](https://sonarcloud.io/dashboard?id=bsl-objects-to-analyze-sonar)
+[![Build Status](https://travis-ci.org/brobots-corporation/bsl2sq.svg?branch=master)](https://travis-ci.org/brobots-corporation/bsl2sq) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bsl2sq&metric=alert_status)](https://sonarcloud.io/dashboard?id=bsl2sq)
 
 Поиск bsl файлов проекта (конфигурации 1С) по вхождению в подсистемы
 
@@ -15,21 +15,24 @@
 
 * Установить Python версии не ниже 3.5;
 * Анализ файлов выгрузки выполняется для платформы 1С версии не ниже 8.3.10;
-* Разместить файл objects_sonar.py в месте использования.
+* Разместить файлы bsl2sq.py и version.py в месте использования в одном каталоге.
 
 ## Использование скрипта
 
-`objects_sonar.py [-h] [-f FILE] [-a] [-u] sourcedirectory parseprefix` - структура вызова скрипта
+`bsl2sq.py [-h] [-f FILE] [-a] [-u] [-F ACCFILE] [-v] [-V] sourcedirectory parseprefix` - структура вызова скрипта
 
 Обязательные аргументы:
 * `sourcedirectory` - путь к корневой папке с выгруженной конфигурацией 1с;
-* `parseprefix` -  префикс подсистем, в которых будет осуществляться поиск путей до файлов объектов метаданных.
+* `parseprefix` -  префиксы подсистем, в которых будет осуществляться поиск путей до файлов объектов метаданных. Разделителем префиксов является пробел, к примеру `рн_ пк_ зс_`
   
 Опциональные параметры:
 * `-h, --help` - вызов справки;
 * `-f FILE, --file FILE` - полный путь к файлу sonar-project.properties, в который будет выполняться выгрузка путей объектов метаданных на место переменной `$inclusions_line`;
+* `-F, --accfile` - полный путь к файлу, в который будет выполняться выгрузка путей объектов с заменой содержимого для конфигурации проверка 1С: АПК;
 * `-a, --absolute` - в случае указания флага будут выгружаться полные пути к файлам. Без флага только относительные пути;
-* `-u, --unicode` - в случае указания флага будут выгружаться все кириллические символы в символах unicode.
+* `-u, --unicode` - в случае указания флага будут выгружаться все кириллические символы в символах unicode;
+* `-v, --verbose` - в случае указания флага будут выводиться подробная информация;
+* `-V, --version` - вывод версии скрипта.
 
 Пример файла `sonar-project.properties` для первоначального запуска:
 
@@ -37,16 +40,16 @@
 # Фильтры на включение в анализ. В примере ниже - только bsl и os файлы.
 sonar.inclusions=$inclusions_line
 ```
-При последующих запусках скрипт автоматически будет удалять предыдущий список  объектов и заполнять новыми в файле `sonar-project.properties`. Замена будет выполняться между двумя ключевыми словами `sonar.inclusions=` и `$inclusions_line_end`
+При последующих запусках скрипт автоматически будет удалять предыдущий список  объектов и заполнять новыми в файле `sonar-project.properties`. Замена будет выполняться между двумя ключевыми словами `sonar.inclusions=` и `$inclusions_end`
 
 ### Пример использования скрипта в Linux
 
 ```sh
-python objects_sonar.py "/Users/gostmair/GitReps/rn_erp/src/conf" "рн_" -u -f "/Users/gostmair/GitReps/rn_erp/sonar-project.properties"
+python bsl2sq.py "/Users/gostmair/GitReps/rn_erp/src/conf" "рн_" -u -f "/Users/gostmair/GitReps/rn_erp/sonar-project.properties"
 ```
 
 ### Пример использования скрипта в Windows
 
 ```sh
-python c:\PythonScripts\objects_sonar.py c:\PythonScripts\rn_erp\src\conf\ рн_ -u -f d:\rn_erp\sonar-project.properties
+python c:\PythonScripts\bsl2sq.py c:\PythonScripts\rn_erp\src\conf\ рн_ -u -f d:\rn_erp\sonar-project.properties
 ```

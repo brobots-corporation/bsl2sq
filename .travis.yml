@@ -17,7 +17,7 @@ jobs:
       python: 3.8
       addons:
         sonarcloud:
-          organization: "brobots-team"
+          organization: "brobots-corporation"
       before_script: echo "Пропуск разворачивания тестовой структуру"
       script: sonar-scanner
 

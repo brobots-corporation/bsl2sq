@@ -6,14 +6,15 @@ python:
   - '3.5'
   - '3.6'
   - '3.7'
+  - '3.8'
 
 before_script: tests/init_structure.sh
-script: python -m unittest tests/test_objects_sonar.py
+script: python -m unittest tests/test_bsl2sq.py
 
 jobs:
   include:
     - stage: "Code analyze"
-      python: 3.7
+      python: 3.8
       addons:
         sonarcloud:
           organization: "brobots-team"

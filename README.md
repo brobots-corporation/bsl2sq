@@ -1,6 +1,6 @@
 # Поисковик bsl модулей для sonarqube и 1С:АПК
 
-[![Build Status](https://travis-ci.org/brobots-corporation/bsl2sq.svg?branch=master)](https://travis-ci.org/brobots-corporation/bsl2sq) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=brobots-corporation_bsl2sq&metric=alert_status)](https://sonarcloud.io/dashboard?id=brobots-corporation_bsl2sq)
+[![Build Status](https://travis-ci.org/brobots-corporation/bsl2sq.svg?branch=master)](https://travis-ci.org/brobots-corporation/bsl2sq) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bsl2sq&metric=alert_status)](https://sonarcloud.io/dashboard?id=bsl2sq)
 
 Поиск bsl файлов проекта (конфигурации 1С) по вхождению в подсистемы
 

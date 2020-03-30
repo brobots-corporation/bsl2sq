@@ -7,7 +7,7 @@ def bsl2sq():
     """
 
     cli_args = CliParser().args
-    BslFinder(cli_args).data_to_sq()
+    BslFinder(cli_args).data_to_sq
 
 
 if __name__ == "__main__":

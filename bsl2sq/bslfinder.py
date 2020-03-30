@@ -181,6 +181,7 @@ class BslFinder:
         for li in list_bsl_files_paths:
             print(li)
 
+    @property
     def data_to_sq(self):
         """ Вывод списка объектов с bsl файлами для проверки
             в различные точки вывода

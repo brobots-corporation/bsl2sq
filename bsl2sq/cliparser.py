@@ -1,20 +1,20 @@
 import argparse
 import sys
 import os
-from version import __version__
+from .__version__ import __version__
 import logging
 
 
 class CliParser:
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.__version = __version__
         self.__parser = self.__create_parser()
         self.__args = self.__parser.parse_args()
         self.__check_args(self.__args)
 
-    def __create_parser(self):
+    def __create_parser(self) -> argparse.ArgumentParser:
 
         # Создание парсера аргументов командной строки
         parser = argparse.ArgumentParser()
@@ -39,7 +39,7 @@ class CliParser:
 
         return parser
 
-    def __check_args(self, args):
+    def __check_args(self, args) -> None:
 
         # Процедура проверки аргументов командной строки
         # Проверка существования указанной папки
@@ -66,5 +66,5 @@ class CliParser:
             logging.info(f">>> Абсолютный путь к исходным файлу sonar-project.properties: {os.path.abspath(args.file)}")
 
     @property
-    def args(self):
+    def args(self) -> argparse.ArgumentParser:
         return vars(self.__args)

@@ -1,8 +1,6 @@
-import argparse
 import glob
 import os
 import re
-import sys
 import xml.dom.minidom as minidom
 import logging
 
@@ -15,12 +13,12 @@ class BslFinder:
     KEYWORD_INCL_LINE_END = "$inclusions_end"
     KEYWORD_INCL_LINE = "$inclusions_line"
 
-    def __init__(self, args):
+    def __init__(self, args) -> None:
         super().__init__()
         self.args = args
         self.root_subsystems_path = os.path.join(args["sourcedirectory"], "subsystems")
 
-    def __get_subsystems_files_paths(self):
+    def __get_subsystems_files_paths(self) -> list:
         """ Получение списка .xml файлов подсистем конфигурации по префиксам
         """
 
@@ -37,7 +35,7 @@ class BslFinder:
 
         return subsystems_files_paths
 
-    def __get_objects_names_from_subsystem(self, file):
+    def __get_objects_names_from_subsystem(self, file) -> set:
         """ Парсинг .xml файла подсистемы конфигурации,
             для получения списка объектов в этой подсистеме
         """
@@ -61,7 +59,7 @@ class BslFinder:
 
         return set_metadata_names
 
-    def __get_list_metadata_name(self):
+    def __get_list_metadata_name(self) -> list:
         """ Получение списка наименований объектов метаданных,
             в подсистемах конфигурации по префиксам
         """
@@ -89,7 +87,7 @@ class BslFinder:
 
         return list_metadata_name
 
-    def __get_bsl_files_paths(self):
+    def __get_bsl_files_paths(self) -> list:
         """ Получение списка путей bsl файлов,
             в подсистемах конфигурации, по которым проводится поиск
         """
@@ -126,7 +124,7 @@ class BslFinder:
 
         return list_bsl_files_paths
 
-    def __get_bsl_files_line(self):
+    def __get_bsl_files_line(self) -> str:
         """ Получение строки с bsl файлами,
             для подстановки в шаблон файла для sonarqube или АП
         """
@@ -149,7 +147,7 @@ class BslFinder:
 
         return line_bsl_files
 
-    def __write_bsl_line_to_files(self):
+    def __write_bsl_line_to_files(self) -> None:
         """ Запись строки с bsl файлами для проверки
             в указанные файлы с определенным форматом
         """
@@ -168,7 +166,7 @@ class BslFinder:
             sonar_properties_file_write.write(
                 sonar_properties_text.replace(self.KEYWORD_INCL_LINE, line_bsl_files))
 
-    def __write_bsl_files_paths_to_stdout(self):
+    def __write_bsl_files_paths_to_stdout(self) -> None:
         """ Вывод списка объектов с bsl файлами для проверки
             в стандартный поток вывода
         """
@@ -181,8 +179,7 @@ class BslFinder:
         for li in list_bsl_files_paths:
             print(li)
 
-    @property
-    def data_to_sq(self):
+    def data_to_sq(self) -> None:
         """ Вывод списка объектов с bsl файлами для проверки
             в различные точки вывода
         """

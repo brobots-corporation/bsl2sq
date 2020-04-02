@@ -17,9 +17,9 @@
 * Анализ файлов выгрузки выполняется для платформы 1С версии не ниже 8.3.10;
 * Разместить каталог bsl2sq в месте использования.
 
-## Использование скрипта
+## Использование модуля
 
-`bsl2sq.py [-h] [-f FILE] [-a] [-u] [-v] [-V] sourcedirectory parseprefix` - структура вызова скрипта
+`python - m bsl2sq [-h] [-f FILE] [-a] [-u] [-v] [-V] sourcedirectory parseprefix` - структура вызова скрипта
 
 Обязательные аргументы:
 * `sourcedirectory` - путь к корневой папке с выгруженной конфигурацией 1с;
@@ -44,11 +44,11 @@ sonar.inclusions=$inclusions_line
 ### Пример использования скрипта в Linux
 
 ```sh
-python bsl2sq\bsl2sq.py "/Users/gostmair/GitReps/rn_erp/src/conf" "рн_" -u -f "/Users/gostmair/GitReps/rn_erp/sonar-project.properties"
+python -m bsl2sq\bsl2sq "/Users/gostmair/GitReps/rn_erp/src/conf" "рн_" -u -f "/Users/gostmair/GitReps/rn_erp/sonar-project.properties"
 ```
 
 ### Пример использования скрипта в Windows
 
 ```sh
-python c:\PythonScripts\bsl2sq\bsl2sq.py c:\PythonScripts\rn_erp\src\conf\ рн_ -u -f d:\rn_erp\sonar-project.properties
+python -m c:\PythonScripts\bsl2sq\bsl2sq c:\PythonScripts\rn_erp\src\conf\ рн_ -u -f d:\rn_erp\sonar-project.properties
 ```

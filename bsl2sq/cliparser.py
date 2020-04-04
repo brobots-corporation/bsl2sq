@@ -10,11 +10,9 @@ class CliParser:
     def __init__(self) -> None:
         super().__init__()
         self.__version = __version__
-        self.__parser = self.__create_parser()
-        self.__args = self.__parser.parse_args()
-        self.__check_args(self.__args)
+        self.parser = self.create_parser()
 
-    def __create_parser(self) -> argparse.ArgumentParser:
+    def create_parser(self) -> argparse.ArgumentParser:
 
         # Создание парсера аргументов командной строки
         parser = argparse.ArgumentParser()
@@ -39,26 +37,26 @@ class CliParser:
 
         return parser
 
-    def __check_args(self, args) -> None:
+    def check_args(self, args) -> None:
 
         # Процедура проверки аргументов командной строки
         # Проверка существования указанной папки
 
         if not os.path.exists(args.sourcedirectory):
             print(args.sourcedirectory + " - папка не существует")
-            sys.exit()
+            quit
         # Проверка, что по указанному пути находится папка
         if not os.path.isdir(args.sourcedirectory):
             print(args.sourcedirectory + " - это не папка")
-            sys.exit()
+            quit
         # Проверка указания не пустого префикса для подсистем
         if len(args.parseprefix) == 0:
             print("необходимо указать не пустой префикс")
-            sys.exit()
+            quit
         # Проверка, что по указанному пути находится папка
         if len(args.file) != 0 and not os.path.exists(args.file):
             print("файл sonar-project.properties по указанному пути не найден")
-            sys.exit()
+            quit
 
         # Вывод подробного лога выполнения
         if args.verbose:
@@ -67,4 +65,6 @@ class CliParser:
 
     @property
     def args(self) -> argparse.ArgumentParser:
-        return vars(self.__args)
+        args = self.parser.parse_args()
+        self.check_args(args)
+        return vars(args)

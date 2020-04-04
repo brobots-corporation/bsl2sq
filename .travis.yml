@@ -3,13 +3,11 @@ language: python
 dist: xenial
 
 python:
-  - '3.5'
   - '3.6'
   - '3.7'
   - '3.8'
 
-before_script: tests/init_structure.sh
-script: python -m unittest tests/test_bsl2sq.py
+script: python -m unittest
 
 jobs:
   include:

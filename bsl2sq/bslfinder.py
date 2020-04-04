@@ -18,7 +18,7 @@ class BslFinder:
         self.args = args
         self.root_subsystems_path = os.path.join(args["sourcedirectory"], "subsystems")
 
-    def __get_subsystems_files_paths(self) -> list:
+    def get_subsystems_files_paths(self) -> list:
         """ Получение списка .xml файлов подсистем конфигурации по префиксам
         """
 
@@ -35,7 +35,7 @@ class BslFinder:
 
         return subsystems_files_paths
 
-    def __get_objects_names_from_subsystem(self, file) -> set:
+    def get_objects_names_from_subsystem(self, file) -> set:
         """ Парсинг .xml файла подсистемы конфигурации,
             для получения списка объектов в этой подсистеме
         """
@@ -59,12 +59,12 @@ class BslFinder:
 
         return set_metadata_names
 
-    def __get_list_metadata_name(self) -> list:
+    def get_list_metadata_name(self) -> list:
         """ Получение списка наименований объектов метаданных,
             в подсистемах конфигурации по префиксам
         """
 
-        subsystems_files_paths = self.__get_subsystems_files_paths()
+        subsystems_files_paths = self.get_subsystems_files_paths()
 
         set_metadata_name = set()
         list_metadata_name = []
@@ -75,7 +75,7 @@ class BslFinder:
             if self.args["verbose"]:
                 logging.info(sub_path)
 
-            for metadata_name in self.__get_objects_names_from_subsystem(sub_path):
+            for metadata_name in self.get_objects_names_from_subsystem(sub_path):
                 set_metadata_name.add(metadata_name)
 
         list_metadata_name = list(set_metadata_name)
@@ -87,12 +87,12 @@ class BslFinder:
 
         return list_metadata_name
 
-    def __get_bsl_files_paths(self) -> list:
+    def get_bsl_files_paths(self) -> list:
         """ Получение списка путей bsl файлов,
             в подсистемах конфигурации, по которым проводится поиск
         """
 
-        list_metadata_name = self.__get_list_metadata_name()
+        list_metadata_name = self.get_list_metadata_name()
 
         list_bsl_files_paths = []
 
@@ -124,12 +124,12 @@ class BslFinder:
 
         return list_bsl_files_paths
 
-    def __get_bsl_files_line(self) -> str:
+    def get_bsl_files_line(self) -> str:
         """ Получение строки с bsl файлами,
             для подстановки в шаблон файла для sonarqube или АП
         """
 
-        list_bsl_files_paths = self.__get_bsl_files_paths()
+        list_bsl_files_paths = self.get_bsl_files_paths()
 
         # Преобразование кодировки кириллических символов в юникод
         list_bsl_files_paths = [l.encode("unicode-escape").decode("utf-8") for l in list_bsl_files_paths]
@@ -147,12 +147,12 @@ class BslFinder:
 
         return line_bsl_files
 
-    def __write_bsl_line_to_files(self) -> None:
+    def write_bsl_line_to_files(self) -> None:
         """ Запись строки с bsl файлами для проверки
             в указанные файлы с определенным форматом
         """
 
-        line_bsl_files = self.__get_bsl_files_line()
+        line_bsl_files = self.get_bsl_files_line()
 
         with open(self.args["file"], 'r', encoding='utf-8') as sonar_properties_file_read:
             sonar_properties_text = sonar_properties_file_read.read()
@@ -166,11 +166,11 @@ class BslFinder:
             sonar_properties_file_write.write(
                 sonar_properties_text.replace(self.KEYWORD_INCL_LINE, line_bsl_files))
 
-    def __write_bsl_files_paths_to_stdout(self) -> None:
+    def write_bsl_files_paths_to_stdout(self) -> None:
         """ Вывод списка объектов с bsl файлами для проверки
             в стандартный поток вывода
         """
-        list_bsl_files_paths = self.__get_bsl_files_paths()
+        list_bsl_files_paths = self.get_bsl_files_paths()
 
         # Преобразование кодировки кириллических символов в юникод
         list_bsl_files_paths = [l.encode("unicode-escape").decode("utf-8") for l in list_bsl_files_paths
@@ -185,6 +185,6 @@ class BslFinder:
         """
 
         if len(self.args["file"]):
-            self.__write_bsl_line_to_files()
+            self.write_bsl_line_to_files()
         else:
-            self.__write_bsl_files_paths_to_stdout()
+            self.write_bsl_files_paths_to_stdout()

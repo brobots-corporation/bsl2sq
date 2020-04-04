@@ -21,7 +21,7 @@ class TestBslFinder(unittest.TestCase):
             'sourcedirectory': abs_path_test_conf,
             'parseprefix': "рн_ пс_",
             'file': "",
-            'absolute': True,
+            'absolute': False,
             'unicode': True,
             'verbose': True
         }
@@ -30,7 +30,7 @@ class TestBslFinder(unittest.TestCase):
             'sourcedirectory': abs_path_test_conf,
             'parseprefix': "рн_ пс_",
             'file': os.path.join(abs_path_test_conf, "sonar-project.properties"),
-            'absolute': True,
+            'absolute': False,
             'unicode': True,
             'verbose': True
         }
@@ -44,7 +44,7 @@ class TestBslFinder(unittest.TestCase):
         self.count_get_objects_names_from_subsystem = 2
         self.count_get_list_metadata_name = 24
         self.count_get_bsl_files_paths = 63
-        self.count_get_bsl_files_line = 9747
+        self.count_get_bsl_files_line = 6849
 
         os.chdir(abs_path_test_conf)
 

@@ -26,7 +26,7 @@ class TestCliParser(unittest.TestCase):
         args.sourcedirectory = abs_path_test_conf
         args.parseprefix = "рн_"
         args.file = ""
-        args.absolute = True
+        args.absolute = False
         args.unicode = True
         args.verbose = True
 

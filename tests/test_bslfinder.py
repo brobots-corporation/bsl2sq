@@ -4,6 +4,7 @@ import contextlib
 from io import StringIO
 from bsl2sq.bslfinder import BslFinder
 
+unittest.TestCase.maxDiff = None
 abs_path_test_conf = os.path.abspath("tests/test_conf")
 
 

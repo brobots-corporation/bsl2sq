@@ -16,7 +16,7 @@ class BslFinder:
     def __init__(self, args) -> None:
         super().__init__()
         self.args = args
-        self.root_subsystems_path = os.path.join(args["sourcedirectory"], "subsystems")
+        self.root_subsystems_path = os.path.join(args["sourcedirectory"], "Subsystems")
 
     def get_subsystems_files_paths(self) -> list:
         """ Получение списка .xml файлов подсистем конфигурации по префиксам

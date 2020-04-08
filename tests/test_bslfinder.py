@@ -2,7 +2,6 @@ import unittest
 import os
 import contextlib
 from io import StringIO
-from difflib import ndiff
 from bsl2sq.bslfinder import BslFinder
 
 
@@ -16,6 +15,7 @@ class TestBslFinder(unittest.TestCase):
 
         with open(os.path.join(abs_path_test_conf, "fixture-sonar-project.properties"), 'r', encoding='utf-8') as fsp:
             self.fixture_sp_list = fsp.read().splitlines()
+            self.fixture_sp_list = [l.replace(", \\", "") for l in self.fixture_sp_list]
 
         with open(os.path.join(abs_path_test_conf, "fixture_stdout"), 'r', encoding='utf-8') as fsd:
             self.fixture_sd_list = fsd.read().splitlines()
@@ -80,8 +80,8 @@ class TestBslFinder(unittest.TestCase):
         self.bslfinder_file.write_bsl_line_to_files()
         with open(self.bslfinder_file.args["file"], 'r', encoding='utf-8') as sonar_properties_file_read:
             sonar_properties_list = sonar_properties_file_read.read().splitlines()
-            # self.assertEqual(sorted(sonar_properties_list), sorted(self.fixture_sp_list))
-            print(sonar_properties_list)
+            sonar_properties_list = [l.replace(", \\", "") for l in sonar_properties_list]
+            self.assertEqual(sorted(sonar_properties_list), sorted(self.fixture_sp_list))
 
     def test_write_bsl_files_paths_to_stdout(self):
 

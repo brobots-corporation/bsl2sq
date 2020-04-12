@@ -2,21 +2,22 @@ language: python
 
 dist: xenial
 
-python:
-  - '3.6'
-  - '3.7'
-  - '3.8'
-
-script: python -m unittest
-
 jobs:
   include:
+    - stage: "Unit test"
+      python: 
+        - '3.6'
+        - '3.7'
+        - '3.8'
+      script: coverage run -m unittest discover
     - stage: "Code analyze"
       python: 3.8
       addons:
         sonarcloud:
           organization: "brobots-corporation"
-      before_script: echo "Пропуск разворачивания тестовой структуру"
+      before_script:
+        - coverage run -m unittest discover
+        - coverage xml -o coverage-reports/coverage.xml
       script: sonar-scanner
 
 notifications:

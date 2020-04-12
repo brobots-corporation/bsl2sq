@@ -24,5 +24,9 @@ objects_sonar.spec
 # Игнорировать каталог venv с виртуальным окружением
 **/.venv/
 
+# Игнорировать каталоги с xunit и coverage отчетами
+**/xunit-reports/
+**/coverage-reports/
+
 # Игнорировать файл настройки правил flake8
 .flake8

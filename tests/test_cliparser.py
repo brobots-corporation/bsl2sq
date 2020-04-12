@@ -5,25 +5,26 @@ import os
 from io import StringIO
 from bsl2sq.cliparser import CliParser
 
-abs_path_test_conf = os.path.abspath("tests/test_conf")
+ABS_PATH_TEMPLATE_SONAR_FILE = os.path.abspath("tests/test_conf")
+ABS_PATH_FIXTURE_SONAR_FILE = os.path.join(ABS_PATH_TEMPLATE_SONAR_FILE, "template-sonar-project.properties")
 
 
 class TestCliParser(unittest.TestCase):
 
     def setUp(self):
         self.cliparser = CliParser()
-        os.chdir(abs_path_test_conf)
+        self.count_argument = 8
 
     def test_create_parser(self):
         parser = self.cliparser.create_parser()
         self.assertIsInstance(parser, argparse.ArgumentParser)
-        self.assertEqual(len(parser._actions), 8)
+        self.assertEqual(len(parser._actions), self.count_argument)
 
     def test_check_args_stdout(self):
 
         args = argparse.Namespace()
 
-        args.sourcedirectory = abs_path_test_conf
+        args.sourcedirectory = ABS_PATH_TEMPLATE_SONAR_FILE
         args.parseprefix = "рн_"
         args.file = ""
         args.absolute = False
@@ -42,9 +43,9 @@ class TestCliParser(unittest.TestCase):
 
         args = argparse.Namespace()
 
-        args.sourcedirectory = abs_path_test_conf
+        args.sourcedirectory = ABS_PATH_TEMPLATE_SONAR_FILE
         args.parseprefix = "рн_"
-        args.file = os.path.join(abs_path_test_conf, "sonar-project.properties")
+        args.file = ABS_PATH_FIXTURE_SONAR_FILE
         args.absolute = True
         args.unicode = True
         args.verbose = True

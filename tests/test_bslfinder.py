@@ -1,27 +1,40 @@
 import unittest
 import os
 import contextlib
+import shutil
 from io import StringIO
 from bsl2sq.bslfinder import BslFinder
 
 
 unittest.TestCase.maxDiff = None
-abs_path_test_conf = os.path.abspath("tests/test_conf")
+ABS_PATH_TEST_CONF = os.path.abspath("tests/test_conf")
+ABS_PATH_FIXTURE_SONAR_FILE = os.path.join(ABS_PATH_TEST_CONF, "fixture-sonar-project.properties")
+ABS_PATH_FIXTURE_SONAR_STDOUT = os.path.join(ABS_PATH_TEST_CONF, "fixture_stdout")
+ABS_PATH_TEMPLATE_SONAR_FILE = os.path.join(ABS_PATH_TEST_CONF, "template-sonar-project.properties")
+ABS_PATH_SONAR_FILE = os.path.join(ABS_PATH_TEST_CONF, "sonar-project.properties")
+
+
+def setUpModule():
+    shutil.copyfile(ABS_PATH_TEMPLATE_SONAR_FILE, ABS_PATH_SONAR_FILE)
+
+
+def tearDownModule():
+    os.remove(ABS_PATH_SONAR_FILE)
 
 
 class TestBslFinder(unittest.TestCase):
 
     def setUp(self):
 
-        with open(os.path.join(abs_path_test_conf, "fixture-sonar-project.properties"), 'r', encoding='utf-8') as fsp:
+        with open(ABS_PATH_FIXTURE_SONAR_FILE, 'r', encoding='utf-8') as fsp:
             self.fixture_sp_list = fsp.read().splitlines()
             self.fixture_sp_list = [l.replace(", \\", "") for l in self.fixture_sp_list]
 
-        with open(os.path.join(abs_path_test_conf, "fixture_stdout"), 'r', encoding='utf-8') as fsd:
+        with open(ABS_PATH_FIXTURE_SONAR_STDOUT, 'r', encoding='utf-8') as fsd:
             self.fixture_sd_list = fsd.read().splitlines()
 
         args_stdout = {
-            'sourcedirectory': abs_path_test_conf,
+            'sourcedirectory': ABS_PATH_TEST_CONF,
             'parseprefix': "рн_ пс_",
             'file': "",
             'absolute': False,
@@ -30,9 +43,9 @@ class TestBslFinder(unittest.TestCase):
         }
 
         args_file = {
-            'sourcedirectory': abs_path_test_conf,
+            'sourcedirectory': ABS_PATH_TEST_CONF,
             'parseprefix': "рн_ пс_",
-            'file': os.path.join(abs_path_test_conf, "sonar-project.properties"),
+            'file': ABS_PATH_SONAR_FILE,
             'absolute': False,
             'unicode': True,
             'verbose': True
@@ -41,15 +54,13 @@ class TestBslFinder(unittest.TestCase):
         self.bslfinder_stdout = BslFinder(args_stdout)
         self.bslfinder_file = BslFinder(args_file)
 
-        self.subsytem_file_path = os.path.join(abs_path_test_conf, "Subsystems/рн_Супер.xml")
+        self.subsytem_file_path = os.path.join(ABS_PATH_TEST_CONF, "Subsystems/рн_Супер.xml")
 
         self.count_get_subsystems_files_paths = 7
         self.count_get_objects_names_from_subsystem = 2
         self.count_get_list_metadata_name = 24
         self.count_get_bsl_files_paths = 63
         self.count_get_bsl_files_line = 6849
-
-        os.chdir(abs_path_test_conf)
 
     def test_get_subsystems_files_paths(self):
         gsfp = self.bslfinder_stdout.get_subsystems_files_paths()

@@ -1,6 +1,7 @@
-language: python
-
 dist: xenial
+language: python
+git:
+  depth: false  # "Shallow clone detected during the analysis"
 
 jobs:
   include:

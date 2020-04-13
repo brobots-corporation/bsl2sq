@@ -27,6 +27,12 @@ jobs:
         - coverage xml -o coverage.xml
       script: sonar-scanner
 
+deploy:
+  provider: pypi
+  user: "__token__"
+  password: $PYPI_TOKEN
+  distributions: "sdist bdist_wheel"
+
 notifications:
   email:
     on_failure: change

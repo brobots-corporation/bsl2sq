@@ -31,5 +31,10 @@ setup(name='bsl2sq',
           'Topic :: Software Development :: Libraries :: Python Modules'
       ],
       tests_require=['coverage', 'unittest-xml-reporting'],
-      test_suite='tests'
+      test_suite='tests',
+      entry_points={
+          'console_scripts': [
+              'bsl2sq=bsl2sq.app:bsl2sq'
+          ]
+      }
       )

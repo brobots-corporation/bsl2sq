@@ -1,4 +1,4 @@
-# Поисковик bsl модулей для sonarqube и 1С:АПК
+# Поисковик bsl модулей для sonarqube
 
 [![Build Status](https://travis-ci.org/brobots-corporation/bsl2sq.svg?branch=master)](https://travis-ci.org/brobots-corporation/bsl2sq)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bsl2sq&metric=alert_status)](https://sonarcloud.io/dashboard?id=bsl2sq)
@@ -24,7 +24,7 @@
 
 ## Использование модуля
 
-`python - m bsl2sq [-h] [-f FILE] [-a] [-u] [-v] [-V] sourcedirectory parseprefix` - структура вызова скрипта
+`python -m bsl2sq [-h] [-f FILE] [-a] [-u] [-v] [-V] sourcedirectory parseprefix` - структура вызова скрипта
 
 Обязательные аргументы:
 * `sourcedirectory` - путь к корневой папке с выгруженной конфигурацией 1с;

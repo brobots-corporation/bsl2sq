@@ -7,21 +7,24 @@ jobs:
   include:
     - name: "Unit test python 3.6"
       python: 3.6
-      script: coverage run -m unittest discover
+      install: echo "pass install"
+      script: python -m unittest
     - name: "Unit test python 3.7"
       python: 3.7
-      script: coverage run -m unittest discover
+      install: echo "pass install"
+      script: python -m unittest
     - name: "Unit test python 3.8"
       python: 3.8
-      script: coverage run -m unittest discover
+      install: echo "pass install"
+      script: python -m unittest
     - stage: "Code analyze"
       python: 3.8
       addons:
         sonarcloud:
           organization: "brobots-corporation"
       before_script:
-        - coverage run -m unittest discover
-        - coverage xml -o coverage-reports/coverage-unittest.xml
+        - coverage run --source=bsl2sq -m xmlrunner --output-file=tests.xml
+        - coverage xml -o coverage.xml
       script: sonar-scanner
 
 notifications:

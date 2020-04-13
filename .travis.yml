@@ -26,12 +26,13 @@ jobs:
         - coverage run --source=bsl2sq -m xmlrunner --output-file=tests.xml
         - coverage xml -o coverage.xml
       script: sonar-scanner
-
-deploy:
-  provider: pypi
-  user: "__token__"
-  password: $PYPI_TOKEN
-  distributions: "sdist bdist_wheel"
+    - stage: "deploy pypi"
+      script: skip
+      deploy:
+        provider: pypi
+        user: "__token__"
+        password: $PYPI_TOKEN
+        distributions: "sdist bdist_wheel"
 
 notifications:
   email:

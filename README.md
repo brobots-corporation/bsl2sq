@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/brobots-corporation/bsl2sq.svg?branch=master)](https://travis-ci.org/brobots-corporation/bsl2sq)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bsl2sq&metric=alert_status)](https://sonarcloud.io/dashboard?id=bsl2sq)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=bsl2sq&metric=coverage)](https://sonarcloud.io/dashboard?id=bsl2sq)
+[![](https://img.shields.io/pypi/v/bsl2sq.svg?style=flat&color=blue)](https://pypi.org/project/bsl2sq/)
+[![](https://img.shields.io/pypi/pyversions/bsl2sq.svg)](https://pypi.python.org/pypi/bsl2sq/)
 [![](https://img.shields.io/badge/license-GPL3-yellow.svg)](https://github.com/brobots-corporation/bsl2sq/blob/master/LICENSE)
 
 Поиск bsl файлов проекта (конфигурации 1С) по вхождению в подсистемы
@@ -16,7 +18,7 @@
 
 ## Установка и обновление
 
-* Установить Python версии не ниже 3.5;
+* Установить Python версии не ниже 3.6;
 * Анализ файлов выгрузки выполняется для платформы 1С версии не ниже 8.3.10;
 * Разместить каталог bsl2sq в месте использования.
 

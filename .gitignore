@@ -5,10 +5,11 @@
 # Игнорировать файлы Mac OS X
 .DS_Store
 
-# Игнорировать файлы pyinstaller
-build
-dist
+# Игнорировать файлы pyinstaller и сборки для pypi
+**/build
+**/dist
 objects_sonar.spec
+**/bsl2sq.egg-info
 
 # Игнорировать байткод
 *.pyc

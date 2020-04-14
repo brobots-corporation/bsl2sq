@@ -28,6 +28,9 @@ objects_sonar.spec
 # Игнорировать каталоги с xunit и coverage отчетами
 **/xunit-reports/
 **/coverage-reports/
+.coverage
+tests.xml
+coverage.xml
 
 # Игнорировать файл настройки правил flake8
 .flake8

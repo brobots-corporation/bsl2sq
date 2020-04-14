@@ -18,6 +18,14 @@ class BslFinder:
         self.args = args
         self.root_subsystems_path = os.path.join(args["sourcedirectory"], "Subsystems")
 
+    def string_to_unicode(self, string):
+        """ Преобразование строки в unicode символы
+        """
+        if self.args["unicode"]:
+            return string.encode("unicode-escape").decode("utf-8")
+        else:
+            return string
+
     def get_subsystems_files_paths(self) -> list:
         """ Получение списка .xml файлов подсистем конфигурации по префиксам
         """
@@ -132,7 +140,7 @@ class BslFinder:
         list_bsl_files_paths = self.get_bsl_files_paths()
 
         # Преобразование кодировки кириллических символов в юникод
-        list_bsl_files_paths = [l.encode("unicode-escape").decode("utf-8") for l in list_bsl_files_paths]
+        list_bsl_files_paths = list(map(self.string_to_unicode, list_bsl_files_paths))
 
         line_bsl_files = ""
 
@@ -172,9 +180,8 @@ class BslFinder:
         """
         list_bsl_files_paths = self.get_bsl_files_paths()
 
-        # Преобразование кодировки кириллических символов в юникод
-        list_bsl_files_paths = [l.encode("unicode-escape").decode("utf-8") for l in list_bsl_files_paths
-                                if self.args["unicode"]]
+        # Преобразование кодировки кириллических символов в юникод если необходимо
+        list_bsl_files_paths = list(map(self.string_to_unicode, list_bsl_files_paths))
 
         for li in list_bsl_files_paths:
             print(li)

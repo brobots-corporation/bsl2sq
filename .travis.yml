@@ -1,5 +1,7 @@
+os: linux
 dist: xenial
 language: python
+
 git:
   depth: false  # "Shallow clone detected during the analysis"
 
@@ -30,7 +32,7 @@ jobs:
       script: skip
       deploy:
         provider: pypi
-        user: "__token__"
+        username: "__token__"
         password: $PYPI_TOKEN
         distributions: "sdist bdist_wheel"
         on:
@@ -39,4 +41,3 @@ jobs:
 notifications:
   email:
     on_failure: change
-    on_error: change

@@ -1,5 +1,4 @@
 import argparse
-import sys
 import os
 from .__version__ import __version__
 import logging

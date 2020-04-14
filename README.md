@@ -7,7 +7,7 @@
 [![](https://img.shields.io/pypi/pyversions/bsl2sq.svg)](https://pypi.python.org/pypi/bsl2sq/)
 [![](https://img.shields.io/badge/license-GPL3-yellow.svg)](https://github.com/brobots-corporation/bsl2sq/blob/master/LICENSE)
 
-Поиск bsl файлов проекта (конфигурации 1С) по вхождению в подсистемы
+Поиск bsl файлов проекта (конфигурации 1С) по вхождению в подсистемы.
 
 ## Возможности
 
@@ -19,12 +19,19 @@
 ## Установка и обновление
 
 * Установить Python версии не ниже 3.6;
-* Анализ файлов выгрузки выполняется для платформы 1С версии не ниже 8.3.10;
-* Разместить каталог bsl2sq в месте использования.
+* Установить пакет bsl2sq из PyPI командой:
+    ```sh
+    pip install bsl2sq
+    ```
+* Для обновления пакета необходимо воспользоваться командой:
+    ```sh
+    pip install -U bsl2sq
+    ```
+> Анализ файлов выгрузки выполняется для платформы 1С версии не ниже 8.3.10.
 
 ## Использование модуля
 
-`python -m bsl2sq [-h] [-f FILE] [-a] [-u] [-v] [-V] sourcedirectory parseprefix` - структура вызова скрипта
+`bsl2sq [-h] [-f FILE] [-a] [-u] [-v] [-V] sourcedirectory parseprefix` - структура вызова скрипта
 
 Обязательные аргументы:
 * `sourcedirectory` - путь к корневой папке с выгруженной конфигурацией 1с;
@@ -49,11 +56,11 @@ sonar.inclusions=$inclusions_line
 ### Пример использования скрипта в Linux
 
 ```sh
-python -m bsl2sq\bsl2sq "/Users/gostmair/GitReps/rn_erp/src/conf" "рн_" -u -f "/Users/gostmair/GitReps/rn_erp/sonar-project.properties"
+bsl2sq "/Users/gostmair/GitReps/rn_erp/src/conf" "рн_" -u -f "/Users/gostmair/GitReps/rn_erp/sonar-project.properties"
 ```
 
 ### Пример использования скрипта в Windows
 
-```sh
-python -m c:\PythonScripts\bsl2sq\bsl2sq c:\PythonScripts\rn_erp\src\conf\ рн_ -u -f d:\rn_erp\sonar-project.properties
+```cmd
+bsl2sq c:\PythonScripts\rn_erp\src\conf\ рн_ -u -f d:\rn_erp\sonar-project.properties
 ```

@@ -18,7 +18,7 @@ class BslFinder:
         self.args = args
         self.root_subsystems_path = os.path.join(args["sourcedirectory"], "Subsystems")
 
-    def string_to_unicode(self, string):
+    def string_to_unicode(self, string) -> str:
         """ Преобразование строки в unicode символы
         """
         if self.args["unicode"]:

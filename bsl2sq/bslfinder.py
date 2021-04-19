@@ -60,6 +60,8 @@ class BslFinder:
         set_metadata_names = set()
 
         for item in sub_items:
+            if len(item.childNodes) == 0:
+                continue
             obj = item.childNodes[0].data
             # Проверка результата, что он является путем к объекту, а не guid
             if not re.match(mask, obj):
